@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Roadmap — n8n Style Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#2d2e3e; --dot:#43445a;
+  --node-bg:#414258; --node-border:#575a75; --node-hover:#6b6e8f;
+  --accent:#ff6d5a; --accent2:#7d5dfc;
+  --text:#eceef7; --text-dim:#a2a5c4;
+  --wire:#8b8ea8;
+  --panel:#383a4d; --panel-border:#4a4c63;
+  --green:#2fbf8f; --yellow:#f5c96b; --blue:#5aa9f5; --purple:#9d7bfc; --rose:#f56d8f; --cyan:#4dd6e8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--text)}
+
+/* ═══ Top bar (n8n style) ═══ */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#41435a;border-bottom:1px solid #52546e;display:flex;align-items:center;gap:12px;padding:0 16px;z-index:60}
+.wf-icon{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#7d5dfc,#4dd6e8);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.wf-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wf-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);background:#4c4e68;border:1px solid #5c5e7c;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.tb-spacer{flex:1}
+.toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-dim);font-weight:600;white-space:nowrap}
+.switch{width:36px;height:20px;border-radius:20px;background:var(--green);position:relative;cursor:pointer}
+.switch::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;right:2px}
+.btn{font-family:'Inter',sans-serif;font-weight:700;font-size:12px;border:1px solid #5c5e7c;background:#4c4e68;color:var(--text);border-radius:8px;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:.15s}
+.btn:hover{background:#585a78}
+.btn.primary{background:var(--accent);border-color:var(--accent)}
+.btn.primary:hover{background:#ff8271}
+.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* ═══ Canvas ═══ */
+#viewport{position:fixed;inset:56px 0 0 0;overflow:hidden;cursor:grab;background-color:var(--canvas);background-image:radial-gradient(circle,var(--dot) 1.2px,transparent 1.2px);background-size:20px 20px}
+#viewport.panning{cursor:grabbing}
+#world{position:absolute;top:0;left:0;transform-origin:0 0;width:0;height:0}
+#wires{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
+.wire{fill:none;stroke:var(--wire);stroke-width:2}
+.wire-flow{fill:none;stroke:var(--cyan);stroke-width:2;stroke-dasharray:6 84;animation:flow 3s linear infinite;opacity:.9}
+@keyframes flow{to{stroke-dashoffset:-90}}
+
+/* ═══ n8n node (square icon style) ═══ */
+.nnode{position:absolute;width:100px;cursor:grab;user-select:none}
+.nnode .box{width:100px;height:100px;background:var(--node-bg);border:2px solid var(--node-border);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:38px;position:relative;transition:border-color .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.nnode:hover .box{border-color:var(--node-hover)}
+.nnode.selected .box{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,109,90,.25),0 4px 18px rgba(0,0,0,.4)}
+.nnode.dragging{cursor:grabbing;z-index:10}
+.nnode.trigger .box{border-radius:40px 14px 14px 40px}
+.nnode .badge{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.05em;color:#1c1d28;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.nnode .check{position:absolute;bottom:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:2px solid var(--canvas)}
+.nnode .lbl{text-align:center;margin-top:9px;font-size:12.5px;font-weight:700;line-height:1.3;width:150px;margin-left:-25px}
+.nnode .sub{text-align:center;font-size:10.5px;color:var(--text-dim);margin-top:2px;width:150px;margin-left:-25px;line-height:1.35}
+.port{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--canvas);border:2px solid var(--wire);top:44px}
+.port.in{left:-7px}.port.out{right:-7px}
+.nnode .plus{position:absolute;right:-30px;top:42px;width:16px;height:16px;border-radius:4px;background:#4c4e68;color:var(--text-dim);font-size:12px;display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s}
+.nnode:hover .plus{opacity:1}
+
+/* ═══ Sticky notes ═══ */
+.sticky{position:absolute;border-radius:10px;padding:14px 16px;cursor:grab;user-select:none;border:1px solid;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:box-shadow .15s;backdrop-filter:blur(2px)}
+.sticky:hover{box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.sticky.selected{box-shadow:0 0 0 3px rgba(255,109,90,.4),0 8px 24px rgba(0,0,0,.4)}
+.sticky.dragging{cursor:grabbing;z-index:10}
+.sticky h3{font-size:13px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.sticky ul{list-style:none}
+.sticky li{font-size:11px;line-height:1.55;padding:2.5px 0 2.5px 14px;position:relative;font-weight:500}
+.sticky li::before{content:'▸';position:absolute;left:0;opacity:.7}
+.st-yellow{background:rgba(245,201,107,.13);border-color:rgba(245,201,107,.55)}.st-yellow h3,.st-yellow li{color:#ffe3a8}.st-yellow li::before{color:#f5c96b}
+.st-green{background:rgba(47,191,143,.12);border-color:rgba(47,191,143,.55)}.st-green h3,.st-green li{color:#a8f0d8}.st-green li::before{color:#2fbf8f}
+.st-blue{background:rgba(90,169,245,.12);border-color:rgba(90,169,245,.55)}.st-blue h3,.st-blue li{color:#bcdcff}.st-blue li::before{color:#5aa9f5}
+.st-purple{background:rgba(157,123,252,.13);border-color:rgba(157,123,252,.55)}.st-purple h3,.st-purple li{color:#d8c8ff}.st-purple li::before{color:#9d7bfc}
+.st-rose{background:rgba(245,109,143,.12);border-color:rgba(245,109,143,.55)}.st-rose h3,.st-rose li{color:#ffc4d4}.st-rose li::before{color:#f56d8f}
+.st-gray{background:rgba(162,165,196,.1);border-color:rgba(162,165,196,.45)}.st-gray h3,.st-gray li{color:#d5d7ea}.st-gray li::before{color:#a2a5c4}
+
+/* ═══ Side panel (n8n NDV style) ═══ */
+#panel{position:fixed;top:56px;right:0;bottom:0;width:330px;background:var(--panel);border-left:1px solid var(--panel-border);transform:translateX(100%);transition:transform .22s ease;z-index:70;display:flex;flex-direction:column}
+#panel.open{transform:translateX(0)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--panel-border)}
+.panel-head h3{font-size:14px;font-weight:800}
+.close-x{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-dim);line-height:1}
+.panel-body{flex:1;overflow-y:auto;padding:18px}
+.field{margin-bottom:15px}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.field input,.field textarea{width:100%;border:1px solid var(--panel-border);border-radius:8px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:#2f3143;resize:vertical}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.field textarea{min-height:160px;line-height:1.6}
+.hint{font-size:10.5px;color:var(--text-dim);margin-top:5px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{width:26px;height:26px;border-radius:8px;cursor:pointer;border:2px solid transparent}
+.chip.active{border-color:#fff}
+.panel-foot{padding:14px 18px;border-top:1px solid var(--panel-border);display:flex;gap:10px}
+.btn.danger{color:#ffb4c2;border-color:#8f4457;background:#57303c}
+.btn.danger:hover{background:#6b3a49}
+
+/* ═══ Zoom + toast ═══ */
+.zoomctl{position:fixed;left:14px;bottom:14px;display:flex;gap:5px;z-index:50;background:#41435a;border:1px solid #52546e;border-radius:10px;padding:5px}
+.zoomctl button{width:32px;height:32px;border:none;background:transparent;color:var(--text-dim);font-size:16px;font-weight:700;border-radius:7px;cursor:pointer}
+.zoomctl button:hover{background:#52546e;color:var(--text)}
+.zoomctl .pct{font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;align-items:center;padding:0 6px;color:var(--text-dim)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(80px);background:#1c1d28;border:1px solid #52546e;color:var(--text);font-size:12px;font-weight:600;padding:10px 18px;border-radius:10px;transition:.3s;z-index:99;opacity:0}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.hint-bar{position:fixed;left:14px;top:68px;background:#41435acc;border:1px solid #52546e;border-radius:10px;padding:9px 13px;z-index:50;font-size:10.5px;color:var(--text-dim);line-height:1.6;max-width:190px;backdrop-filter:blur(4px)}
+@media (max-width:640px){#panel{width:100%}.hint-bar{display:none}.wf-tag{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wf-icon">⚡</div>
+  <span class="wf-name">AI Agent Service — ৬ মাসের রোডম্যাপ</span>
+  <span class="wf-tag">techtonicstack · workflow</span>
+  <span class="tb-spacer"></span>
+  <span class="toggle">Active <span class="switch"></span></span>
+  <button class="btn" id="addNodeBtn">+ Node</button>
+  <button class="btn" id="addStickyBtn">+ Note</button>
+  <button class="btn" id="importBtn">Import</button>
+  <button class="btn primary" id="exportBtn">Save (JSON)</button>
+  <input type="file" id="importFile" accept=".json" style="display:none">
+</div>
+
+<div class="hint-bar">নোড/নোট <b>ক্লিক</b> = এডিট<br>ড্র্যাগ = সরান · খালি জায়গা ড্র্যাগ = প্যান · স্ক্রল = জুম</div>
+
+<div id="viewport">
+  <div id="world">
+    <svg id="wires"><g id="wireG"></g></svg>
+    <div id="items"></div>
+  </div>
+</div>
+
+<div class="zoomctl">
+  <button id="zout" title="Zoom out">−</button>
+  <span class="pct" id="zpct">100%</span>
+  <button id="zin" title="Zoom in">+</button>
+  <button id="zfit" title="Fit" style="font-size:11px">⛶</button>
+</div>
+
+<aside id="panel" aria-label="এডিটর">
+  <div class="panel-head"><h3 id="panelTitle">এডিট করুন</h3><button class="close-x" id="closePanel" aria-label="বন্ধ">×</button></div>
+  <div class="panel-body">
+    <div class="field" id="rowIcon"><label>আইকন (ইমোজি)</label><input id="fIcon" placeholder="🚀"></div>
+    <div class="field" id="rowBadge"><label>ব্যাজ</label><input id="fBadge" placeholder="MONTH 1"></div>
+    <div class="field"><label>টাইটেল</label><input id="fTitle"></div>
+    <div class="field" id="rowSub"><label>সাবটাইটেল</label><input id="fSub"></div>
+    <div class="field" id="rowItems"><label>পয়েন্ট লিস্ট</label><textarea id="fItems"></textarea><div class="hint">প্রতি লাইনে একটি পয়েন্ট</div></div>
+    <div class="field" id="rowColor"><label>কালার</label>
+      <div class="chips" id="chips">
+        <span class="chip" data-c="yellow" style="background:#f5c96b"></span>
+        <span class="chip" data-c="green" style="background:#2fbf8f"></span>
+        <span class="chip" data-c="blue" style="background:#5aa9f5"></span>
+        <span class="chip" data-c="purple" style="background:#9d7bfc"></span>
+        <span class="chip" data-c="rose" style="background:#f56d8f"></span>
+        <span class="chip" data-c="gray" style="background:#a2a5c4"></span>
+      </div>
+    </div>
+    <div class="field" id="rowW"><label>নোটের প্রস্থ (px)</label><input id="fW" type="number" min="160" max="520" step="10"></div>
+  </div>
+  <div class="panel-foot">
+    <button class="btn danger" id="delBtn" style="flex:1">ডিলিট</button>
+    <button class="btn primary" id="doneBtn" style="flex:1">সম্পন্ন</button>
+  </div>
+</aside>
+
+<div id="toast"></div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+const BADGE_C={yellow:'#f5c96b',green:'#2fbf8f',blue:'#5aa9f5',purple:'#9d7bfc',rose:'#f56d8f',gray:'#a2a5c4'};
+let state={
+  nodes:[
+    {id:'start',type:'node',trigger:true,x:60,y:560,icon:'⚡',badge:'START',c:'rose',title:'সিদ্ধান্ত নিন',sub:'AI Agent সার্ভিস লঞ্চ'},
+    {id:'m1',type:'node',x:320,y:560,icon:'🎓',badge:'MONTH 1',c:'purple',title:'শেখা + সেটআপ',sub:'n8n · API · RAG'},
+    {id:'m2',type:'node',x:580,y:560,icon:'📦',badge:'MONTH 2',c:'purple',title:'প্যাকেজিং',sub:'অফার + পোর্টফোলিও'},
+    {id:'m3',type:'node',x:840,y:560,icon:'🤝',badge:'MONTH 3',c:'purple',title:'প্রথম ক্লায়েন্ট',sub:'existing base থেকে'},
+    {id:'m4',type:'node',x:1100,y:560,icon:'🚀',badge:'MONTH 4',c:'purple',title:'আউটরিচ স্কেল',sub:'Upwork + LinkedIn'},
+    {id:'m5',type:'node',x:1360,y:560,icon:'🔁',badge:'MONTH 5',c:'purple',title:'রিটেইনার মডেল',sub:'recurring income'},
+    {id:'m6',type:'node',x:1620,y:560,icon:'📈',badge:'MONTH 6',c:'green',title:'টিম + স্কেল',sub:'$2k–5k MRR টার্গেট'},
+
+    {id:'s-cost',type:'sticky',x:60,y:40,w:340,c:'yellow',title:'💰 শুরুর খরচ (মাসিক)',
+     items:['n8n self-hosted VPS — $10–20/মাস (৳1,500–2,500)','OpenAI / Claude API — $20–50/মাস (শুরুতে)','Vector DB (Pinecone/Supabase free tier) — $0','Demo hosting + domain — ৳500/মাস','শেখা: YouTube + n8n docs — ফ্রি','মোট: ৳6,000–12,000/মাস — খুবই কম রিস্ক']},
+    {id:'s-rev',type:'sticky',x:440,y:40,w:340,c:'green',title:'📊 আয় / প্রাইসিং',
+     items:['Simple chatbot/automation — $300–800 সেটআপ','Full AI agent (lead gen, support) — $1,000–2,500','মাসিক maintenance — $100–500/ক্লায়েন্ট','লোকাল BD — ৳25k–80k সেটআপ + ৳5k–20k/মাস','৬ মাসে টার্গেট: $2,000–5,000 MRR']},
+    {id:'s-cli',type:'sticky',x:820,y:40,w:340,c:'blue',title:'🎯 কোন ক্লায়েন্ট ধরবেন',
+     items:['আপনার existing SEO/web ক্লায়েন্ট — সবচেয়ে সহজ!','Real estate — lead qualify bot','E-commerce — support + order tracking','Clinic — appointment booking agent','Coaching center — admission follow-up','International (US/UK/AU) — Upwork/LinkedIn']},
+    {id:'s-demand',type:'sticky',x:1580,y:40,w:340,c:'purple',title:'📈 মার্কেট ডিমান্ড (2026)',
+     items:['গ্লোবাল AI agent মার্কেট: ~$11–12 billion (2026)','2030-এ $50+ billion — বছরে ~45% গ্রোথ','79% কোম্পানি already AI agent adopt করছে','Asia Pacific = সবচেয়ে দ্রুত বাড়ছে (আপনার অঞ্চল!)','Top ডিমান্ড: customer service, e-commerce, healthcare','SME segment-ই সবচেয়ে বড় ক্রেতা — আপনার sweet spot']},
+    {id:'s-acq',type:'sticky',x:1200,y:40,w:340,c:'rose',title:'🧲 ক্লায়েন্ট পাওয়ার সহজ উপায়',
+     items:['১. পুরনো ক্লায়েন্টদের upsell — free pilot অফার','২. Loom demo ভিডিও + LinkedIn cold DM','৩. Upwork/Fiverr-এ "AI automation" gig','৪. FB business গ্রুপে case study শেয়ার','৫. Referral — প্রতি রেফারে ১০% কমিশন']},
+
+    {id:'d1',type:'sticky',x:270,y:290,w:220,c:'gray',title:'M1 টাস্ক',
+     items:['n8n workflow + webhook মাস্টার','Prompt engineering শিখুন','২–৩টা demo agent বানান','নিজের agency-র support bot লাইভ']},
+    {id:'d2',type:'sticky',x:530,y:290,w:220,c:'gray',title:'M2 টাস্ক',
+     items:['৩টা প্যাকেজ: Starter/Growth/Pro','Demo ভিডিও রেকর্ড','ওয়েবসাইটে AI service পেজ','Proposal template রেডি']},
+    {id:'d3',type:'sticky',x:790,y:290,w:220,c:'gray',title:'M3 টাস্ক',
+     items:['১০ পুরনো ক্লায়েন্টকে অফার','২টা free/discounted pilot','১–২টা paid প্রজেক্ট ($500–1,500)','Testimonial + case study নিন']},
+    {id:'d4',type:'sticky',x:1050,y:290,w:220,c:'gray',title:'M4 টাস্ক',
+     items:['Upwork daily proposal','সপ্তাহে ৩টা LinkedIn কনটেন্ট','Case study পাবলিশ (ROI দেখান)','২–৩টা নতুন ক্লায়েন্ট']},
+    {id:'d5',type:'sticky',x:1310,y:290,w:220,c:'gray',title:'M5 টাস্ক',
+     items:['সবাইকে maintenance প্যাকেজে','Monthly report system','Referral প্রোগ্রাম চালু','$1k–2k MRR']},
+    {id:'d6',type:'sticky',x:1570,y:290,w:220,c:'gray',title:'M6 টাস্ক',
+     items:['Junior dev হায়ার/ট্রেইন','SOP + template library','৪–৬ active ক্লায়েন্ট','প্রাইস ২০–৩০% বাড়ান']},
+
+    {id:'s-risk',type:'sticky',x:700,y:800,w:420,c:'rose',title:'⚠️ যে ভুলগুলো এড়াবেন',
+     items:['সব শিখতে গিয়ে ৩ মাস নষ্ট নয় — ১ মাসেই বিক্রি শুরু করুন','Custom সব কিছু নয় — template reuse করুন','API cost ক্লায়েন্টের বিলে pass করুন','Contract-এ revision limit রাখুন (scope creep)','ফ্রি pilot ২টার বেশি নয়']},
+  ],
+  edges:[['start','m1'],['m1','m2'],['m2','m3'],['m3','m4'],['m4','m5'],['m5','m6']]
+};
+
+/* ═══════════ VIEW / PAN / ZOOM ═══════════ */
+const vp=document.getElementById('viewport'),world=document.getElementById('world'),
+      itemsEl=document.getElementById('items'),wireG=document.getElementById('wireG');
+let view={x:20,y:20,k:1};
+function applyView(){world.style.transform=`translate(${view.x}px,${view.y}px) scale(${view.k})`;document.getElementById('zpct').textContent=Math.round(view.k*100)+'%';}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200);}
+
+let panning=false,ps={};
+vp.addEventListener('pointerdown',e=>{
+  if(e.target.closest('.nnode')||e.target.closest('.sticky'))return;
+  panning=true;vp.classList.add('panning');ps={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};
+  vp.setPointerCapture(e.pointerId);
+});
+vp.addEventListener('pointermove',e=>{if(!panning)return;view.x=ps.vx+(e.clientX-ps.x);view.y=ps.vy+(e.clientY-ps.y);applyView();});
+vp.addEventListener('pointerup',()=>{panning=false;vp.classList.remove('panning');});
+vp.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=vp.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  const nk=Math.min(2.2,Math.max(.25,view.k*(e.deltaY<0?1.1:.9)));
+  view.x=mx-(mx-view.x)*(nk/view.k);view.y=my-(my-view.y)*(nk/view.k);view.k=nk;applyView();
+},{passive:false});
+document.getElementById('zin').onclick=()=>{view.k=Math.min(2.2,view.k*1.15);applyView();};
+document.getElementById('zout').onclick=()=>{view.k=Math.max(.25,view.k/1.15);applyView();};
+document.getElementById('zfit').onclick=fitView;
+function fitView(){
+  const xs=state.nodes.map(n=>n.x),ys=state.nodes.map(n=>n.y);
+  const minX=Math.min(...xs)-50,minY=Math.min(...ys)-50,
+        maxX=Math.max(...state.nodes.map(n=>n.x+(n.w||150)))+60,
+        maxY=Math.max(...state.nodes.map(n=>n.y+240));
+  const r=vp.getBoundingClientRect();
+  view.k=Math.min(1.15,Math.max(.25,Math.min(r.width/(maxX-minX),r.height/(maxY-minY))));
+  view.x=(r.width-(maxX-minX)*view.k)/2-minX*view.k;
+  view.y=(r.height-(maxY-minY)*view.k)/2-minY*view.k;
+  applyView();
+}
+
+/* ═══════════ RENDER ═══════════ */
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function render(){
+  itemsEl.innerHTML='';
+  state.nodes.forEach(n=>{
+    let el;
+    if(n.type==='node'){
+      el=document.createElement('div');
+      el.className='nnode'+(n.trigger?' trigger':'');
+      el.innerHTML=`
+        <div class="box" style="border-color:${sel(n)?'':''}">${esc(n.icon||'⬡')}
+          <span class="badge" style="background:${BADGE_C[n.c]||BADGE_C.purple}">${esc(n.badge||'')}</span>
+          <span class="check">✓</span>
+          ${n.trigger?'':'<span class="port in"></span>'}<span class="port out"></span>
+          <span class="plus">+</span>
+        </div>
+        <div class="lbl">${esc(n.title)}</div>
+        ${n.sub?`<div class="sub">${esc(n.sub)}</div>`:''}`;
+    }else{
+      el=document.createElement('div');
+      el.className='sticky st-'+(n.c||'gray');
+      el.style.width=(n.w||300)+'px';
+      el.innerHTML=`<h3>${esc(n.title)}</h3><ul>${(n.items||[]).map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
+    }
+    el.dataset.id=n.id;
+    el.style.left=n.x+'px';el.style.top=n.y+'px';
+    if(n.id===selId)el.classList.add('selected');
+    itemsEl.appendChild(el);
+    makeDraggable(el,n);
+  });
+  drawWires();
+}
+function sel(n){return n.id===selId;}
+function drawWires(){
+  wireG.innerHTML='';
+  state.edges.forEach(([a,b])=>{
+    const A=state.nodes.find(n=>n.id===a),B=state.nodes.find(n=>n.id===b);
+    if(!A||!B)return;
+    const x1=A.x+102,y1=A.y+50,x2=B.x-2,y2=B.y+50;
+    const dx=Math.max(40,Math.abs(x2-x1)/2);
+    const d=`M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`;
+    const p1=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p1.setAttribute('d',d);p1.setAttribute('class','wire');wireG.appendChild(p1);
+    const p2=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p2.setAttribute('d',d);p2.setAttribute('class','wire-flow');wireG.appendChild(p2);
+  });
+}
+
+/* ═══════════ DRAG + SELECT ═══════════ */
+let selId=null;
+function makeDraggable(el,n){
+  let drag=null,moved=false;
+  el.addEventListener('pointerdown',e=>{
+    e.stopPropagation();moved=false;
+    drag={sx:e.clientX,sy:e.clientY,nx:n.x,ny:n.y};
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const dx=(e.clientX-drag.sx)/view.k,dy=(e.clientY-drag.sy)/view.k;
+    if(Math.abs(dx)>3||Math.abs(dy)>3){moved=true;el.classList.add('dragging');}
+    n.x=drag.nx+dx;n.y=drag.ny+dy;
+    el.style.left=n.x+'px';el.style.top=n.y+'px';drawWires();
+  });
+  el.addEventListener('pointerup',()=>{el.classList.remove('dragging');if(!moved)openEditor(n.id);drag=null;});
+}
+
+/* ═══════════ EDITOR ═══════════ */
+const panel=document.getElementById('panel');
+const F=id=>document.getElementById(id);
+function openEditor(id){
+  selId=id;
+  const n=state.nodes.find(x=>x.id===id);if(!n)return;
+  const isNode=n.type==='node';
+  F('panelTitle').textContent=isNode?'নোড এডিট':'নোট এডিট';
+  F('rowIcon').style.display=isNode?'':'none';
+  F('rowBadge').style.display=isNode?'':'none';
+  F('rowSub').style.display=isNode?'':'none';
+  F('rowItems').style.display=isNode?'none':'';
+  F('rowW').style.display=isNode?'none':'';
+  F('fIcon').value=n.icon||'';F('fBadge').value=n.badge||'';
+  F('fTitle').value=n.title||'';F('fSub').value=n.sub||'';
+  F('fItems').value=(n.items||[]).join('\n');F('fW').value=n.w||300;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.c===n.c));
+  panel.classList.add('open');render();
+}
+function liveUpdate(){
+  const n=state.nodes.find(x=>x.id===selId);if(!n)return;
+  if(n.type==='node'){n.icon=F('fIcon').value;n.badge=F('fBadge').value;n.sub=F('fSub').value;}
+  else{n.items=F('fItems').value.split('\n').map(s=>s.trim()).filter(Boolean);n.w=Math.max(160,Math.min(520,+F('fW').value||300));}
+  n.title=F('fTitle').value;
+  render();
+}
+['fIcon','fBadge','fTitle','fSub','fItems','fW'].forEach(id=>F(id).addEventListener('input',liveUpdate));
+document.getElementById('chips').addEventListener('click',e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  const n=state.nodes.find(x=>x.id===selId);if(!n)return;
+  n.c=c.dataset.c;
+  document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x===c));
+  render();
+});
+function closePanel(){panel.classList.remove('open');selId=null;render();}
+F('closePanel').onclick=F('doneBtn').onclick=closePanel;
+F('delBtn').onclick=()=>{
+  if(!selId)return;
+  state.nodes=state.nodes.filter(n=>n.id!==selId);
+  state.edges=state.edges.filter(([a,b])=>a!==selId&&b!==selId);
+  closePanel();toast('ডিলিট হয়েছে');
+};
+
+/* ═══════════ ADD / SAVE / IMPORT ═══════════ */
+function centerPos(){const r=vp.getBoundingClientRect();return{x:(r.width/2-view.x)/view.k,y:(r.height/2-view.y)/view.k};}
+document.getElementById('addNodeBtn').onclick=()=>{
+  const p=centerPos(),id='n'+Date.now();
+  state.nodes.push({id,type:'node',x:p.x-50,y:p.y-50,icon:'🧩',badge:'NEW',c:'blue',title:'নতুন ধাপ',sub:''});
+  render();openEditor(id);toast('নতুন নোড যোগ হয়েছে');
+};
+document.getElementById('addStickyBtn').onclick=()=>{
+  const p=centerPos(),id='s'+Date.now();
+  state.nodes.push({id,type:'sticky',x:p.x-140,y:p.y-60,w:280,c:'yellow',title:'📝 নতুন নোট',items:['এখানে পয়েন্ট লিখুন']});
+  render();openEditor(id);toast('নতুন নোট যোগ হয়েছে');
+};
+document.getElementById('exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='ai-agent-roadmap.json';a.click();
+  URL.revokeObjectURL(a.href);toast('সেভ হয়েছে — JSON ডাউনলোড ফোল্ডারে');
+};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);
+    if(Array.isArray(d.nodes)&&Array.isArray(d.edges)){state=d;selId=null;render();fitView();toast('রোডম্যাপ লোড হয়েছে');}
+    else toast('ফাইল ফরম্যাট ঠিক নেই');
+  }catch{toast('JSON পড়া যায়নি');}};
+  r.readAsText(f);e.target.value='';
+});
+
+render();fitView();
+window.addEventListener('resize',drawWires);
+</script>
+</body>
+</html>
