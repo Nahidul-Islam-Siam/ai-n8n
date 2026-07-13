@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Agent Roadmap — n8n Style Workflow</title>
+<title>AI Automation Branch — 6 Month Business Plan</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -111,8 +111,8 @@ body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--text)}
 
 <div class="topbar">
   <div class="wf-icon">⚡</div>
-  <span class="wf-name">AI Agent Service — ৬ মাসের রোডম্যাপ</span>
-  <span class="wf-tag">techtonicstack · workflow</span>
+  <span class="wf-name">AI Automation Branch — ৬ মাসের Business Plan</span>
+  <span class="wf-tag">INTERNATIONAL FIRST · FIVERR-LED</span>
   <span class="tb-spacer"></span>
   <span class="toggle">Active <span class="switch"></span></span>
   <button class="btn" id="addNodeBtn">+ Node</button>
@@ -171,40 +171,48 @@ body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--text)}
 const BADGE_C={yellow:'#f5c96b',green:'#2fbf8f',blue:'#5aa9f5',purple:'#9d7bfc',rose:'#f56d8f',gray:'#a2a5c4'};
 let state={
   nodes:[
-    {id:'start',type:'node',trigger:true,x:60,y:560,icon:'⚡',badge:'START',c:'rose',title:'সিদ্ধান্ত নিন',sub:'AI Agent সার্ভিস লঞ্চ'},
-    {id:'m1',type:'node',x:320,y:560,icon:'🎓',badge:'MONTH 1',c:'purple',title:'শেখা + সেটআপ',sub:'n8n · API · RAG'},
-    {id:'m2',type:'node',x:580,y:560,icon:'📦',badge:'MONTH 2',c:'purple',title:'প্যাকেজিং',sub:'অফার + পোর্টফোলিও'},
-    {id:'m3',type:'node',x:840,y:560,icon:'🤝',badge:'MONTH 3',c:'purple',title:'প্রথম ক্লায়েন্ট',sub:'existing base থেকে'},
-    {id:'m4',type:'node',x:1100,y:560,icon:'🚀',badge:'MONTH 4',c:'purple',title:'আউটরিচ স্কেল',sub:'Upwork + LinkedIn'},
-    {id:'m5',type:'node',x:1360,y:560,icon:'🔁',badge:'MONTH 5',c:'purple',title:'রিটেইনার মডেল',sub:'recurring income'},
-    {id:'m6',type:'node',x:1620,y:560,icon:'📈',badge:'MONTH 6',c:'green',title:'টিম + স্কেল',sub:'$2k–5k MRR টার্গেট'},
+    {id:'start',type:'node',trigger:true,x:60,y:560,icon:'⚡',badge:'START',c:'rose',title:'Branch Start',sub:'International first · Fiverr-led'},
+    {id:'m1',type:'node',x:320,y:560,icon:'🔎',badge:'MONTH 1',c:'purple',title:'Research + Setup',sub:'Market · hiring · offers'},
+    {id:'m2',type:'node',x:580,y:560,icon:'🚀',badge:'MONTH 2',c:'purple',title:'Fiverr Launch',sub:'Demos · gigs · B2B'},
+    {id:'m3',type:'node',x:840,y:560,icon:'⭐',badge:'MONTH 3',c:'purple',title:'Delivery + Proof',sub:'Reviews · case studies'},
+    {id:'m4',type:'node',x:1100,y:560,icon:'🧩',badge:'MONTH 4',c:'purple',title:'Productize',sub:'Templates · better pricing'},
+    {id:'m5',type:'node',x:1360,y:560,icon:'📣',badge:'MONTH 5',c:'purple',title:'Scale Channels',sub:'Partners · retainers · BD test'},
+    {id:'m6',type:'node',x:1620,y:560,icon:'📈',badge:'MONTH 6',c:'green',title:'Review + Scale',sub:'P&L · team · next step'},
 
-    {id:'s-cost',type:'sticky',x:60,y:40,w:340,c:'yellow',title:'💰 শুরুর খরচ (মাসিক)',
-     items:['n8n self-hosted VPS — $10–20/মাস (৳1,500–2,500)','OpenAI / Claude API — $20–50/মাস (শুরুতে)','Vector DB (Pinecone/Supabase free tier) — $0','Demo hosting + domain — ৳500/মাস','শেখা: YouTube + n8n docs — ফ্রি','মোট: ৳6,000–12,000/মাস — খুবই কম রিস্ক']},
-    {id:'s-rev',type:'sticky',x:440,y:40,w:340,c:'green',title:'📊 আয় / প্রাইসিং',
-     items:['Simple chatbot/automation — $300–800 সেটআপ','Full AI agent (lead gen, support) — $1,000–2,500','মাসিক maintenance — $100–500/ক্লায়েন্ট','লোকাল BD — ৳25k–80k সেটআপ + ৳5k–20k/মাস','৬ মাসে টার্গেট: $2,000–5,000 MRR']},
-    {id:'s-cli',type:'sticky',x:820,y:40,w:340,c:'blue',title:'🎯 কোন ক্লায়েন্ট ধরবেন',
-     items:['আপনার existing SEO/web ক্লায়েন্ট — সবচেয়ে সহজ!','Real estate — lead qualify bot','E-commerce — support + order tracking','Clinic — appointment booking agent','Coaching center — admission follow-up','International (US/UK/AU) — Upwork/LinkedIn']},
-    {id:'s-demand',type:'sticky',x:1580,y:40,w:340,c:'purple',title:'📈 মার্কেট ডিমান্ড (2026)',
-     items:['গ্লোবাল AI agent মার্কেট: ~$11–12 billion (2026)','2030-এ $50+ billion — বছরে ~45% গ্রোথ','79% কোম্পানি already AI agent adopt করছে','Asia Pacific = সবচেয়ে দ্রুত বাড়ছে (আপনার অঞ্চল!)','Top ডিমান্ড: customer service, e-commerce, healthcare','SME segment-ই সবচেয়ে বড় ক্রেতা — আপনার sweet spot']},
-    {id:'s-acq',type:'sticky',x:1200,y:40,w:340,c:'rose',title:'🧲 ক্লায়েন্ট পাওয়ার সহজ উপায়',
-     items:['১. পুরনো ক্লায়েন্টদের upsell — free pilot অফার','২. Loom demo ভিডিও + LinkedIn cold DM','৩. Upwork/Fiverr-এ "AI automation" gig','৪. FB business গ্রুপে case study শেয়ার','৫. Referral — প্রতি রেফারে ১০% কমিশন']},
+    {id:'s-cost',type:'sticky',x:60,y:40,w:340,c:'yellow',title:'💰 Startup + Branch Cost',
+     items:['AI Developer: ৳৩৫k/মাস · ৬ মাসে ৳২.১০L','Lead-gen support (M3 থেকে): ~৳১.২০L','API, hosting, DB, tools: ~৳১.২০L','Fiverr assets + outreach: ~৳১.২০L','Demo/setup/security: ~৳৫০k','Reserve/contingency: ~৳৮০k','৬ মাসের draft ceiling: ৳৭L','Shared resource value আলাদা track হবে']},
+    {id:'s-rev',type:'sticky',x:440,y:40,w:340,c:'green',title:'📊 Pricing + Earning',
+     items:['Paid audit: $50–100','Starter: $250–400','Business workflow: $700–1,200','Advanced: $1,500–3,000+','Monthly support: $100–500+','Fiverr completed order-এর 80% seller পায়','Quote = Discovery + Build + Support + Usage','৬ মাসের target revenue: ~৳৯.১০L']},
+    {id:'s-cli',type:'sticky',x:820,y:40,w:340,c:'blue',title:'🎯 Which Clients to Reach',
+     items:['Shopify stores with support/order volume','Marketing agencies managing 10+ accounts','Businesses receiving 50+ leads/month','Real estate and lead-gen companies','Clinics/consultants with booking volume','Small SaaS and professional services','Best fit: repetitive pain + existing software','Primary: US/UK/CA/AU/UAE buyers']},
+    {id:'s-demand',type:'sticky',x:1580,y:40,w:340,c:'purple',title:'📈 Market Demand (2026)',
+     items:['Fiverr AI automation demand: +49%','n8n AI automation searches: +125%','AI voice-agent interest: +49%','AI mobile-app demand: +92%','AI website demand: +39%','Upwork AI-enabled skill demand: +109% YoY','Demand: automation, support, sales, reporting','Sources: Fiverr & Upwork 2026 reports']},
+    {id:'s-acq',type:'sticky',x:1200,y:40,w:340,c:'rose',title:'🧲 Easy Client Finding',
+     items:['1. Existing Fiverr profile/reputation ব্যবহার','2. Problem-specific Fiverr gigs','3. Previous international relationships','4. Loom demo + scoped custom offer','5. White-label agency partnership','6. LinkedIn + researched cold email','7. Upwork secondary channel','8. International proof-এর পর Bangladesh']},
 
-    {id:'d1',type:'sticky',x:270,y:290,w:220,c:'gray',title:'M1 টাস্ক',
-     items:['n8n workflow + webhook মাস্টার','Prompt engineering শিখুন','২–৩টা demo agent বানান','নিজের agency-র support bot লাইভ']},
-    {id:'d2',type:'sticky',x:530,y:290,w:220,c:'gray',title:'M2 টাস্ক',
-     items:['৩টা প্যাকেজ: Starter/Growth/Pro','Demo ভিডিও রেকর্ড','ওয়েবসাইটে AI service পেজ','Proposal template রেডি']},
-    {id:'d3',type:'sticky',x:790,y:290,w:220,c:'gray',title:'M3 টাস্ক',
-     items:['১০ পুরনো ক্লায়েন্টকে অফার','২টা free/discounted pilot','১–২টা paid প্রজেক্ট ($500–1,500)','Testimonial + case study নিন']},
-    {id:'d4',type:'sticky',x:1050,y:290,w:220,c:'gray',title:'M4 টাস্ক',
-     items:['Upwork daily proposal','সপ্তাহে ৩টা LinkedIn কনটেন্ট','Case study পাবলিশ (ROI দেখান)','২–৩টা নতুন ক্লায়েন্ট']},
-    {id:'d5',type:'sticky',x:1310,y:290,w:220,c:'gray',title:'M5 টাস্ক',
-     items:['সবাইকে maintenance প্যাকেজে','Monthly report system','Referral প্রোগ্রাম চালু','$1k–2k MRR']},
-    {id:'d6',type:'sticky',x:1570,y:290,w:220,c:'gray',title:'M6 টাস্ক',
-     items:['Junior dev হায়ার/ট্রেইন','SOP + template library','৪–৬ active ক্লায়েন্ট','প্রাইস ২০–৩০% বাড়ান']},
+    {id:'d1',type:'sticky',x:270,y:290,w:220,c:'gray',title:'M1 · Cost ৳১L · Revenue ৳০',
+     items:['২০ buyer interview','৫০–১০০ Fiverr gig analysis','১০০ job/request classify','১ AI Developer hire/test','৪ launch offer select','২–৩ demo plan/build','Problem-price matrix তৈরি']},
+    {id:'d2',type:'sticky',x:530,y:290,w:220,c:'gray',title:'M2 · Cost ৳১L · Revenue ৳৫০k',
+     items:['৩ demo + Loom video','৪ Fiverr gig publish','Portfolio/landing page','Limited international B2B','CRM + proposal + onboarding','৩০০ prospect research','Target: ১–২ paid pilot']},
+    {id:'d3',type:'sticky',x:790,y:290,w:220,c:'gray',title:'M3 · Cost ৳১.১L · Revenue ৳১L',
+     items:['Paid pilot deliver','Outcome measure','Review/testimonial সংগ্রহ','২ case study publish','Maintenance offer','Lead-gen hire review','Delivery effort track']},
+    {id:'d4',type:'sticky',x:1050,y:290,w:220,c:'gray',title:'M4 · Cost ৳১.৩L · Revenue ৳১.৭L',
+     items:['Successful workflow template','Standard scope + QA','Industry-specific package','Case-study based proposal','Price increase with proof','Delivery time ~৩০% কম','Phase-2 solution test']},
+    {id:'d5',type:'sticky',x:1310,y:290,w:220,c:'gray',title:'M5 · Cost ৳১.৩L · Revenue ৳২.৪L',
+     items:['Best ২ channel-এ focus','White-label partnership','Support plan upsell','Monthly client reporting','Case-study marketing','BD research/pilot শুরু','CAC + conversion track']},
+    {id:'d6',type:'sticky',x:1570,y:290,w:220,c:'gray',title:'M6 · Cost ৳১.৩L · Revenue ৳৩.৫L',
+     items:['Full branch P&L','Cash vs shared cost','Best solution/channel','All SOP final','Capacity + hiring decision','Own tools/process plan','Scale/continue/restructure']},
 
-    {id:'s-risk',type:'sticky',x:700,y:800,w:420,c:'rose',title:'⚠️ যে ভুলগুলো এড়াবেন',
-     items:['সব শিখতে গিয়ে ৩ মাস নষ্ট নয় — ১ মাসেই বিক্রি শুরু করুন','Custom সব কিছু নয় — template reuse করুন','API cost ক্লায়েন্টের বিলে pass করুন','Contract-এ revision limit রাখুন (scope creep)','ফ্রি pilot ২টার বেশি নয়']},
+    {id:'s-services',type:'sticky',x:60,y:800,w:340,c:'green',title:'📦 What We Will Sell',
+     items:['Launch: AI workflow automation','Launch: Lead qualification + booking','Launch: E-commerce AI support','Launch: Marketing reporting automation','Phase 2: CRM follow-up + knowledge assistant','Phase 2: Document processing','Phase 3: Voice/WhatsApp agent','Phase 3: Custom AI web/app solution']},
+    {id:'s-tech',type:'sticky',x:440,y:800,w:340,c:'purple',title:'🔧 Technology We Need',
+     items:['n8n/Make + REST API + webhooks','OpenAI/Claude/Gemini','Shopify API + CRM + Calendar','Google Ads + Meta Ads + GA4 APIs','PostgreSQL/Supabase + optional vector DB','Docker/VPS + GitHub','Monitoring, backup, credential manager','Demo ও production environment আলাদা']},
+    {id:'s-team',type:'sticky',x:820,y:800,w:340,c:'blue',title:'👥 Team + Required Skills',
+     items:['Branch Lead: sales + client management','১ AI Automation Developer','M3 থেকে দরকার হলে lead-gen person','Shared frontend/design/QA শুরুতে','Skills: n8n, API, OAuth, JS, database','Skills: LLM, deployment, error handling','Paid technical test + documentation','২য় dev only after 80%+ capacity']},
+    {id:'s-competition',type:'sticky',x:1200,y:800,w:340,c:'yellow',title:'⚔️ Competition + Difference',
+     items:['Competitors: cheap builders + n8n freelancers','Specialized automation agencies','Ready-made SaaS products','আমরা business problem diagnose করব','Industry-specific demo + integration','Human handoff + monitoring','Documentation + post-launch support','Shopify/marketing experience advantage']},
+    {id:'s-risk',type:'sticky',x:1580,y:800,w:380,c:'rose',title:'⚠️ Warning Notes',
+     items:['সব service একসঙ্গে launch নয়','Fully autonomous result promise নয়','Unlimited API/voice/WhatsApp usage নয়','Client credentials personal account-এ নয়','Written scope + revision limit বাধ্যতামূলক','Human fallback + monitoring রাখতে হবে','Fiverr platform policy ভাঙা যাবে না','Revenue target guaranteed নয়']},
   ],
   edges:[['start','m1'],['m1','m2'],['m2','m3'],['m3','m4'],['m4','m5'],['m5','m6']]
 };
@@ -370,7 +378,7 @@ document.getElementById('addStickyBtn').onclick=()=>{
 document.getElementById('exportBtn').onclick=()=>{
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='ai-agent-roadmap.json';a.click();
+  a.href=URL.createObjectURL(blob);a.download='ai-automation-branch-plan.json';a.click();
   URL.revokeObjectURL(a.href);toast('সেভ হয়েছে — JSON ডাউনলোড ফোল্ডারে');
 };
 document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
